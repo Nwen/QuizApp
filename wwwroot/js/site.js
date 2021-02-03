@@ -10,6 +10,7 @@ const connection = new signalR.HubConnectionBuilder()
     .withUrl("/chatHub")
     .build();
 
+$("#myModal").modal();
 //send msg
 /*document.getElementById("sendMessage").addEventListener("click", event => {
     const user = document.getElementById("userName").value;
@@ -33,7 +34,7 @@ document.getElementById("sendQuestion").addEventListener("click", event => {
     const message = document.getElementById("userQuestion").value;
 
     connection.invoke("SendQuestion", message).catch(err => console.error(err.toString()));
-    connection.invoke("SendAnwser", "QUIZ: ", message).catch(err => console.error(err.toString()));
+    connection.invoke("SendAnwser", "QUIZ", message).catch(err => console.error(err.toString()));
     event.preventDefault();
 });
 
@@ -70,6 +71,15 @@ connection.on("ReceiveAnwser", (user, message) => {
     list.appendChild(li);
 })
 
+//reception nouveau joueur
+connection.on("ReceivePlayer", (user) => {
+    const li = document.createElement("li");
+    li.classList.add("list-unstyled")
+    li.textContent = user;
+    list = document.getElementById("playerList");
+    list.appendChild(li);
+})
+
 function setHost() {
     document.getElementById("player_button").style.display = "block";
     document.getElementById("host_button").style.display = "none";
@@ -87,6 +97,16 @@ function setPlayer() {
     document.getElementById("host_tab").style.display = "none";
     document.getElementById("player_anwser").style.display = "block";
     document.getElementById("host_question").style.display = "none";
+
+    const user = document.getElementById("userName").value;
+    document.getElementById("userNameDisplay").value = user;
+    connection.invoke("SendAnwser", user, "Joined the game").catch(err => console.error(err.toString()));
+
+    //send user to host
+    connection.invoke("SendPlayer", user).catch(err => console.error(err.toString()));
 }
 
+function display() {
+    $("#myModal").modal();  
+}
 connection.start().catch(err => console.error.toString())

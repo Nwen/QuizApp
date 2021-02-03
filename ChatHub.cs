@@ -12,9 +12,14 @@ namespace testwebapp{
         {
             await Clients.All.SendAsync("ReceiveAnwser", user, message);
         }
+        public async Task SendPlayer(string user)
+        {
+            await Clients.All.SendAsync("ReceivePlayer", user);
+        }
         public async Task SendQuestion(string message)
         {
             await Clients.All.SendAsync("ReceiveQuestion", message);
         }
+       
     }
 }
